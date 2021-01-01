@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import { connect } from 'react-redux'
+import addTask from './actions/add-task';
 
-function App() {
+const App = (props) => {
+  const PropsState = props.state;
+  const [getTodoText, setTodoText] = useState("");
+  const addTaskClick = (e) => {
+    props.onAddTask(getTodoText, 2);
+    e.preventDefault();
+    setTodoText("");
+  }
+  const removeTask = (id) => {
+    console.log(id)
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div >
+      <form>
+        <input type="text" value={getTodoText} onChange={(todoInput) => setTodoText(todoInput.target.value)} />
+        <button type="submit" onClick={addTaskClick}>Add</button>
+      </form>
+      <ul>
+        {
+          PropsState.map((n, key) => {
+            return (
+              <div key={key}>
+                <li>{n.todo}, id : {n.id} <button type="submit" onClick={removeTask(n.id)}>Delete</button></li>
+                <br />
+              </div>
+            );
+          })
+        }
+      </ul>
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return { state }
+};
+
+const mapDispatchToProps = {
+  onAddTask: addTask
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
